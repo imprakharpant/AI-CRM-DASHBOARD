@@ -8,6 +8,7 @@ from app.services.auth import get_password_hash
 from datetime import date, timedelta
 import random
 
+print("DATABASE_URL =", os.getenv("DATABASE_URL"))
 # Drop and recreate tables to start fresh
 from sqlalchemy import text
 try:

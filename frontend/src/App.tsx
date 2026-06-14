@@ -161,7 +161,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex bg-elevated/40 border border-border-subtle p-1 rounded-xl mb-6">
+        <div className="flex bg-[var(--input-bg)] border border-[var(--input-border)] p-1 rounded-xl mb-6">
           <button
             type="button"
             onClick={() => { setIsRegister(false); setError(''); }}
@@ -206,7 +206,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Full Name"
-                className="w-full bg-elevated/30 border border-border-subtle rounded-xl pl-10 pr-4 py-3 text-[13px] text-txt-primary focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-200 placeholder-txt-muted"
+                className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl pl-10 pr-4 py-3 text-[13px] text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200 placeholder-[var(--input-placeholder)]"
                 required={isRegister}
               />
             </div>
@@ -221,7 +221,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email Address"
-              className="w-full bg-elevated/30 border border-border-subtle rounded-xl pl-10 pr-4 py-3 text-[13px] text-txt-primary focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-200 placeholder-txt-muted"
+              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl pl-10 pr-4 py-3 text-[13px] text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200 placeholder-[var(--input-placeholder)]"
               required
             />
           </div>
@@ -235,7 +235,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
-              className="w-full bg-elevated/30 border border-border-subtle rounded-xl pl-10 pr-10 py-3 text-[13px] text-txt-primary focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/50 transition-all duration-200 placeholder-txt-muted"
+              className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl pl-10 pr-10 py-3 text-[13px] text-txt-primary focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200 placeholder-[var(--input-placeholder)]"
               required
             />
             <button
