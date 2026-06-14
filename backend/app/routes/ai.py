@@ -47,8 +47,8 @@ def segment_customers(payload: AISegmentRequest, db: Session = Depends(get_db)):
     desc_parts = []
     if inactive_days is not None:
         desc_parts.append(f"inactive for {inactive_days}+ days")
-    if min_spend is not None:
-        desc_parts.append(f"spent at least ₹{min_spend:,.2f}")
+    if min_spend is not None and min_spend > 0:
+        desc_parts.append(f"spent at least ₹{min_spend:,.0f}")
     
     description = "All customers"
     if desc_parts:

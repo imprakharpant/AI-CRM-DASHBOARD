@@ -70,8 +70,8 @@ def parse_segment_prompt(prompt: str) -> Dict[str, Any]:
     if days_matches:
         inactive_days = int(days_matches[0])
     
-    # Try parsing spend amount (e.g., 5000 or ₹5000 or Rs. 5000)
-    spend_matches = re.findall(r'(?:₹|rs\.?|spend(?:\s+more\s+than)?)\s*(\d+)', prompt, re.IGNORECASE)
+    # Try parsing spend amount (e.g., 5000 or ₹5000 or Rs. 5000 or spent 4000)
+    spend_matches = re.findall(r'(?:₹|rs\.?|spen[dt](?:\s+more\s+than)?)\s*(\d+)', prompt, re.IGNORECASE)
     if spend_matches:
         min_spend = float(spend_matches[0])
     else:
