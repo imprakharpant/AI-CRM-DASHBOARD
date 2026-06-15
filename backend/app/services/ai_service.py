@@ -18,7 +18,7 @@ def _init_gemini():
         return
     _gemini_initialized = True
     
-    if GEMINI_API_KEY and GEMINI_API_KEY.startswith("AIzaSy"):
+    if GEMINI_API_KEY and (GEMINI_API_KEY.startswith("AIzaSy") or GEMINI_API_KEY.startswith("AQ.")):
         try:
             import google.generativeai as genai
             genai.configure(api_key=GEMINI_API_KEY)
@@ -28,7 +28,7 @@ def _init_gemini():
         except Exception as e:
             logger.error(f"Error configuring Gemini: {e}")
     else:
-        logger.info("No valid Gemini API key found (key must start with 'AIzaSy'). Using local rule-based fallback.")
+        logger.info("No valid Gemini API key found (key must start with 'AIzaSy' or 'AQ.'). Using local rule-based fallback.")
 
 def get_gemini_model():
     _init_gemini()
