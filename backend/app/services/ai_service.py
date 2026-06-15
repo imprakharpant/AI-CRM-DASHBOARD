@@ -1,30 +1,39 @@
 import os
 import json
 import logging
-import google.generativeai as genai
 from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
-# Config Gemini
+# Config Gemini — lazy loaded to prevent gRPC hanging on Windows startup
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 is_gemini_available = False
+_genai_module = None
+_gemini_initialized = False
 
-if GEMINI_API_KEY and GEMINI_API_KEY.startswith("AIzaSy"):
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        # Use gemini-1.5-flash as default
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        is_gemini_available = True
-        logger.info("Gemini API successfully configured.")
-    except Exception as e:
-        logger.error(f"Error configuring Gemini: {e}")
-else:
-    logger.info("No valid Gemini API key found (key must start with 'AIzaSy'). Using local rule-based fallback.")
+def _init_gemini():
+    """Lazy-initialize Gemini SDK on first use, not at import time."""
+    global is_gemini_available, _genai_module, _gemini_initialized
+    if _gemini_initialized:
+        return
+    _gemini_initialized = True
+    
+    if GEMINI_API_KEY and GEMINI_API_KEY.startswith("AIzaSy"):
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=GEMINI_API_KEY)
+            _genai_module = genai
+            is_gemini_available = True
+            logger.info("Gemini API successfully configured.")
+        except Exception as e:
+            logger.error(f"Error configuring Gemini: {e}")
+    else:
+        logger.info("No valid Gemini API key found (key must start with 'AIzaSy'). Using local rule-based fallback.")
 
 def get_gemini_model():
-    if is_gemini_available:
-        return genai.GenerativeModel('gemini-1.5-flash')
+    _init_gemini()
+    if is_gemini_available and _genai_module:
+        return _genai_module.GenerativeModel('gemini-1.5-flash')
     return None
 
 def parse_segment_prompt(prompt: str) -> Dict[str, Any]:

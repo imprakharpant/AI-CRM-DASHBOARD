@@ -35,7 +35,7 @@ class SendRequest(BaseModel):
     channel: str # 'whatsapp', 'sms', 'email', 'rcs'
     callback_url: str
 
-def fire_callback(url: str, comm_id: int, event_type: str, metadata: Optional[Dict[str, Any]] = None):
+async def fire_callback(url: str, comm_id: int, event_type: str, metadata: Optional[Dict[str, Any]] = None):
     payload = {
         "communication_id": comm_id,
         "event_type": event_type,
@@ -44,7 +44,11 @@ def fire_callback(url: str, comm_id: int, event_type: str, metadata: Optional[Di
     }
     try:
         logger.info(f"Firing callback for comm {comm_id} - event: {event_type} to {url}")
-        response = requests.post(url, json=payload, timeout=5)
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(
+            None,
+            lambda: requests.post(url, json=payload, timeout=5)
+        )
         if response.status_code != 200:
             logger.error(f"Callback returned status {response.status_code} for comm {comm_id}")
     except Exception as e:
@@ -69,31 +73,31 @@ async def simulate_communication_lifecycle(req: SendRequest):
     # 2. Delivered vs Failed
     if random.random() < 0.10:
         # 10% failure rate
-        fire_callback(callback_url, comm_id, "failed", {"reason": "Delivery failed: Recipient terminal offline"})
+        await fire_callback(callback_url, comm_id, "failed", {"reason": "Delivery failed: Recipient terminal offline"})
         return
         
-    fire_callback(callback_url, comm_id, "delivered")
+    await fire_callback(callback_url, comm_id, "delivered")
     
     # 3. Opened check
     await asyncio.sleep(random.uniform(1.0, 3.0))
     if random.random() > 0.70:
         return # Not opened
         
-    fire_callback(callback_url, comm_id, "opened")
+    await fire_callback(callback_url, comm_id, "opened")
     
     # 4. Read check
     await asyncio.sleep(random.uniform(0.5, 1.5))
     if random.random() > 0.60:
         return # Opened but not fully read
         
-    fire_callback(callback_url, comm_id, "read")
+    await fire_callback(callback_url, comm_id, "read")
     
     # 5. Clicked check
     await asyncio.sleep(random.uniform(1.0, 3.0))
     if random.random() > 0.30:
         return # Read but call to action ignored
         
-    fire_callback(callback_url, comm_id, "clicked")
+    await fire_callback(callback_url, comm_id, "clicked")
     
     # 6. Conversion check (Order made!)
     await asyncio.sleep(random.uniform(1.0, 4.0))
@@ -102,7 +106,7 @@ async def simulate_communication_lifecycle(req: SendRequest):
         
     # Generate random attributed order amount
     order_amount = round(random.uniform(500.0, 8000.0), 2)
-    fire_callback(
+    await fire_callback(
         callback_url, 
         comm_id, 
         "conversion", 
